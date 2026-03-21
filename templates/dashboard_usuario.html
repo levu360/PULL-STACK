@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Bienvenido, {{ current_user.nombre }} 💪</h2>
+    <a href="/logout" class="btn btn-outline-danger">Cerrar sesión</a>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card text-center p-3">
+            <h1>{{ total_ejercicios }}</h1>
+            <p class="text-muted">Ejercicios disponibles</p>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card text-center p-3">
+            <h1>{{ total_progresos }}</h1>
+            <p class="text-muted">Mis registros de progreso</p>
+        </div>
+    </div>
+</div>
+
+<a href="/progreso" class="btn btn-dark">Ver mi progreso</a>
+{% endblock %}

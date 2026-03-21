@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Usuarios registrados</h2>
+    <a href="/admin" class="btn btn-outline-dark">← Volver</a>
+</div>
+
+<table class="table table-bordered">
+    <thead class="table-dark">
+        <tr>
+            <th>Nombre</th>
+            <th>Email</th>
+            <th>Rol</th>
+            <th>Registros de progreso</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for u in usuarios %}
+        <tr>
+            <td>{{ u.nombre }}</td>
+            <td>{{ u.email }}</td>
+            <td>
+                {% if u.es_admin %}
+                <span class="badge bg-dark">Admin</span>
+                {% else %}
+                <span class="badge bg-secondary">Usuario</span>
+                {% endif %}
+            </td>
+            <td>{{ u.progresos|length }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
