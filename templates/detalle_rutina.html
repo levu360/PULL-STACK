@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2>{{ rutina.nombre }}</h2>
+        <span class="badge bg-{% if rutina.nivel == 'Principiante' %}success{% elif rutina.nivel == 'Medio' %}warning text-dark{% else %}danger{% endif %}">
+            {{ rutina.nivel }}
+        </span>
+    </div>
+    <a href="/rutinas" class="btn btn-outline-dark">← Volver</a>
+</div>
+
+{% if calentamientos %}
+<div class="card p-3 mb-4 border-warning">
+    <h5>🔥 Calentamiento previo</h5>
+    {% for c in calentamientos %}
+    <p><strong>{{ c.nombre }}</strong> — {{ c.duracion_minutos }} min — {{ c.descripcion or '' }}</p>
+    {% endfor %}
+</div>
+{% endif %}
+
+<h5 class="mb-3">Ejercicios de la rutina</h5>
+<table class="table table-bordered">
+    <thead class="table-dark">
+        <tr>
+            <th>#</th>
+            <th>Ejercicio</th>
+            <th>Dificultad</th>
+            <th>Series</th>
+            <th>Repeticiones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for re in rutina.ejercicios %}
+        <tr>
+            <td>{{ re.orden }}</td>
+            <td>{{ re.ejercicio.nombre }}</td>
+            <td>{{ re.ejercicio.nivel_dificultad }}</td>
+            <td>{{ re.ejercicio.series_sugeridas }}</td>
+            <td>{{ re.ejercicio.repeticiones_sugeridas }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<div class="card p-4 mt-4">
+    <h5>¿Completaste esta rutina? Deja tu opinión</h5>
+    <form method="POST" action="/rutinas/{{ rutina.id }}/encuesta">
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <label>Satisfacción general (1-5)</label>
+                <select name="satisfaccion" class="form-control">
+                    <option value="1">1 - Muy mala</option>
+                    <option value="2">2 - Mala</option>
+                    <option value="3">3 - Regular</option>
+                    <option value="4">4 - Buena</option>
+                    <option value="5" selected>5 - Excelente</option>
+                </select>
+            </div>
+            <div class="col-md-4 mb-3">
+                <label>Dificultad (1-5)</label>
+                <select name="dificultad" class="form-control">
+                    <option value="1">1 - Muy fácil</option>
+                    <option value="2">2 - Fácil</option>
+                    <option value="3">3 - Moderada</option>
+                    <option value="4">4 - Difícil</option>
+                    <option value="5">5 - Muy difícil</option>
+                </select>
+            </div>
+            <div class="col-md-4 mb-3">
+                <label>Duración (1-5)</label>
+                <select name="duracion" class="form-control">
+                    <option value="1">1 - Muy corta</option>
+                    <option value="2">2 - Corta</option>
+                    <option value="3">3 - Adecuada</option>
+                    <option value="4">4 - Larga</option>
+                    <option value="5">5 - Muy larga</option>
+                </select>
+            </div>
+            <div class="col-md-12 mb-3">
+                <label>Comentario</label>
+                <textarea name="comentario" class="form-control" rows="2"></textarea>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-dark">Enviar encuesta</button>
+    </form>
+</div>
+{% endblock %}

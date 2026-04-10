@@ -1,31 +1,43 @@
 {% extends "base.html" %}
 {% block content %}
-<h2 class="mb-4">Panel de administración</h2>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Panel de administración</h2>
+    <a href="/logout" class="btn btn-outline-danger">Cerrar sesión</a>
+</div>
 
 <div class="row mb-4">
-    <div class="col-md-4">
+    <div class="col-md-3">
         <div class="card text-center p-3">
             <h1>{{ total_usuarios }}</h1>
             <p class="text-muted">Usuarios registrados</p>
         </div>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-3">
         <div class="card text-center p-3">
             <h1>{{ total_ejercicios }}</h1>
             <p class="text-muted">Ejercicios creados</p>
         </div>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-3">
         <div class="card text-center p-3">
-            <h1>{{ total_progresos }}</h1>
-            <p class="text-muted">Registros de progreso</p>
+            <h1>{{ total_rutinas }}</h1>
+            <p class="text-muted">Rutinas creadas</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center p-3">
+            <h1>{{ total_encuestas }}</h1>
+            <p class="text-muted">Encuestas recibidas</p>
         </div>
     </div>
 </div>
 
-<div class="d-flex gap-2">
+<div class="d-flex gap-2 flex-wrap">
     <a href="/admin/ejercicios" class="btn btn-dark">Gestionar ejercicios</a>
+    <a href="/admin/rutinas" class="btn btn-dark">Gestionar rutinas</a>
+    <a href="/admin/calentamientos" class="btn btn-dark">Gestionar calentamientos</a>
     <a href="/admin/usuarios" class="btn btn-outline-dark">Ver usuarios</a>
-    <a href="/logout" class="btn btn-outline-danger">Cerrar sesión</a>
+    <a href="/admin/encuestas" class="btn btn-outline-dark">Ver encuestas</a>
+    <a href="/admin/backup" class="btn btn-outline-secondary">Hacer backup</a>
 </div>
 {% endblock %}

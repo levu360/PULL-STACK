@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Encuestas recibidas</h2>
+    <a href="/admin" class="btn btn-outline-dark">← Volver</a>
+</div>
+
+<table class="table table-bordered">
+    <thead class="table-dark">
+        <tr>
+            <th>Usuario</th>
+            <th>Rutina</th>
+            <th>Satisfacción</th>
+            <th>Dificultad</th>
+            <th>Duración</th>
+            <th>Comentario</th>
+            <th>Fecha</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for e in encuestas %}
+        <tr>
+            <td>{{ e.usuario.nombre }}</td>
+            <td>{{ e.rutina.nombre }}</td>
+            <td>{{ e.satisfaccion }}/5</td>
+            <td>{{ e.dificultad }}/5</td>
+            <td>{{ e.duracion }}/5</td>
+            <td>{{ e.comentario or '—' }}</td>
+            <td>{{ e.fecha.strftime('%d/%m/%Y') }}</td>
+        </tr>
+        {% endfor %}
+        {% if not encuestas %}
+        <tr><td colspan="7" class="text-center text-muted">No hay encuestas todavía</td></tr>
+        {% endif %}
+    </tbody>
+</table>
+{% endblock %}

@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Rutinas disponibles</h2>
+    <a href="/dashboard" class="btn btn-outline-dark">← Volver</a>
+</div>
+
+<!-- Principiante -->
+<h4 class="mb-3">
+    <span class="badge bg-success">Principiante</span>
+</h4>
+{% for r in principiante %}
+<div class="card mb-3 p-3">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h5>{{ r.nombre }}</h5>
+            <p class="text-muted mb-0">{{ r.descripcion or '' }} — {{ r.ejercicios|length }} ejercicios</p>
+        </div>
+        <a href="/rutinas/{{ r.id }}" class="btn btn-dark">Ver rutina</a>
+    </div>
+</div>
+{% else %}
+<p class="text-muted">No hay rutinas de este nivel todavía.</p>
+{% endfor %}
+
+<!-- Medio -->
+<h4 class="mt-4 mb-3">
+    <span class="badge bg-warning text-dark">Medio</span>
+</h4>
+{% for r in medio %}
+<div class="card mb-3 p-3">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h5>{{ r.nombre }}</h5>
+            <p class="text-muted mb-0">{{ r.descripcion or '' }} — {{ r.ejercicios|length }} ejercicios</p>
+        </div>
+        <a href="/rutinas/{{ r.id }}" class="btn btn-dark">Ver rutina</a>
+    </div>
+</div>
+{% else %}
+<p class="text-muted">No hay rutinas de este nivel todavía.</p>
+{% endfor %}
+
+<!-- Avanzado -->
+<h4 class="mt-4 mb-3">
+    <span class="badge bg-danger">Avanzado</span>
+</h4>
+{% for r in avanzado %}
+<div class="card mb-3 p-3">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h5>{{ r.nombre }}</h5>
+            <p class="text-muted mb-0">{{ r.descripcion or '' }} — {{ r.ejercicios|length }} ejercicios</p>
+        </div>
+        <a href="/rutinas/{{ r.id }}" class="btn btn-dark">Ver rutina</a>
+    </div>
+</div>
+{% else %}
+<p class="text-muted">No hay rutinas de este nivel todavía.</p>
+{% endfor %}
+{% endblock %}

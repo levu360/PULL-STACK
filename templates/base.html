@@ -5,16 +5,173 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calistenia App</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #0f0f1a;
+            color: #e0e0f0;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .navbar {
+            background: linear-gradient(90deg, #1a0533, #0d1b4b);
+            border-bottom: 2px solid #6c3fc5;
+            padding: 14px 24px;
+        }
+
+        .navbar-brand {
+            color: #c084fc !important;
+            font-size: 1.4rem;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .container {
+            margin-top: 2rem;
+        }
+
+        /* Cards */
+        .card {
+            background-color: #1a1a2e;
+            border: 1px solid #2e2e5e;
+            border-radius: 12px;
+            color: #e0e0f0;
+        }
+
+        .card h1 {
+            color: #c084fc;
+            font-size: 2.5rem;
+            font-weight: bold;
+        }
+
+        .card p.text-muted {
+            color: #9090b0 !important;
+        }
+
+        /* Tablas */
+        .table {
+            color: #e0e0f0;
+        }
+
+        .table-dark {
+            background: linear-gradient(90deg, #1a0533, #0d1b4b) !important;
+        }
+
+        .table-bordered td, .table-bordered th {
+            border-color: #2e2e5e;
+        }
+
+        .table tbody tr:hover {
+            background-color: #1e1e3a;
+        }
+
+        /* Botones */
+        .btn-dark {
+            background: linear-gradient(135deg, #6c3fc5, #3b5bdb);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: 500;
+        }
+
+        .btn-dark:hover {
+            background: linear-gradient(135deg, #7c4fd5, #4c6beb);
+            color: white;
+        }
+
+        .btn-outline-dark {
+            border: 1px solid #6c3fc5;
+            color: #c084fc;
+            border-radius: 8px;
+        }
+
+        .btn-outline-dark:hover {
+            background-color: #6c3fc5;
+            color: white;
+        }
+
+        .btn-outline-danger {
+            border: 1px solid #dc3545;
+            color: #ff6b6b;
+            border-radius: 8px;
+        }
+
+        .btn-outline-danger:hover {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .btn-outline-secondary {
+            border: 1px solid #4a4a7a;
+            color: #9090c0;
+            border-radius: 8px;
+        }
+
+        .btn-outline-secondary:hover {
+            background-color: #4a4a7a;
+            color: white;
+        }
+
+        /* Formularios */
+        .form-control, .form-select {
+            background-color: #12122a;
+            border: 1px solid #2e2e5e;
+            color: #e0e0f0;
+            border-radius: 8px;
+        }
+
+        .form-control:focus, .form-select:focus {
+            background-color: #12122a;
+            border-color: #6c3fc5;
+            color: #e0e0f0;
+            box-shadow: 0 0 0 3px rgba(108, 63, 197, 0.25);
+        }
+
+        label {
+            color: #9090b0;
+            font-size: 0.9rem;
+            margin-bottom: 4px;
+        }
+
+        /* Títulos */
+        h2, h4, h5 {
+            color: #c084fc;
+        }
+
+        /* Alerts */
+        .alert-success {
+            background-color: #1a2e1a;
+            border-color: #2d6a2d;
+            color: #6fcf6f;
+        }
+
+        .alert-danger {
+            background-color: #2e1a1a;
+            border-color: #6a2d2d;
+            color: #cf6f6f;
+        }
+
+        /* Badges */
+        .badge.bg-success { background-color: #1d6f42 !important; }
+        .badge.bg-warning { background-color: #856404 !important; }
+        .badge.bg-danger  { background-color: #842029 !important; }
+        .badge.bg-dark    { background-color: #4a3080 !important; }
+        .badge.bg-secondary { background-color: #3a3a5a !important; }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #0f0f1a; }
+        ::-webkit-scrollbar-thumb { background: #6c3fc5; border-radius: 3px; }
+    </style>
 </head>
 <body>
-    <nav class="navbar navbar-dark bg-dark px-4">
-        <span class="navbar-brand">💪 Calistenia</span>
+    <nav class="navbar">
+        <span class="navbar-brand">💪 Pull Stack</span>
     </nav>
 
-    <div class="container mt-4">
+    <div class="container">
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% for category, message in messages %}
-                <div class="alert alert-{{ category }}">{{ message }}</div>
+                <div class="alert alert-{{ category }} mt-3">{{ message }}</div>
             {% endfor %}
         {% endwith %}
 

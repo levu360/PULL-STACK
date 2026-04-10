@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Gestionar rutinas</h2>
+    <a href="/admin" class="btn btn-outline-dark">← Volver</a>
+</div>
+
+<div class="card p-4 mb-4">
+    <h5>Crear nueva rutina</h5>
+    <form method="POST" action="/admin/rutinas/crear">
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <label>Nombre</label>
+                <input type="text" name="nombre" class="form-control" required>
+            </div>
+            <div class="col-md-4 mb-3">
+                <label>Nivel</label>
+                <select name="nivel" class="form-control">
+                    <option>Principiante</option>
+                    <option>Medio</option>
+                    <option>Avanzado</option>
+                </select>
+            </div>
+            <div class="col-md-4 mb-3">
+                <label>Descripción</label>
+                <input type="text" name="descripcion" class="form-control">
+            </div>
+        </div>
+        <button type="submit" class="btn btn-dark">Crear rutina</button>
+    </form>
+</div>
+
+<table class="table table-bordered">
+    <thead class="table-dark">
+        <tr>
+            <th>Nombre</th>
+            <th>Nivel</th>
+            <th>Descripción</th>
+            <th>Ejercicios</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for r in rutinas %}
+        <tr>
+            <td>{{ r.nombre }}</td>
+            <td>
+                {% if r.nivel == 'Principiante' %}
+                    <span class="badge bg-success">Principiante</span>
+                {% elif r.nivel == 'Medio' %}
+                    <span class="badge bg-warning text-dark">Medio</span>
+                {% else %}
+                    <span class="badge bg-danger">Avanzado</span>
+                {% endif %}
+            </td>
+            <td>{{ r.descripcion or '—' }}</td>
+            <td>{{ r.ejercicios|length }}</td>
+            <td>
+                <a href="/admin/rutinas/{{ r.id }}/ejercicios" class="btn btn-sm btn-outline-dark">Agregar ejercicios</a>
+                <a href="/admin/rutinas/borrar/{{ r.id }}" class="btn btn-sm btn-outline-danger"
+                   onclick="return confirm('¿Borrar esta rutina?')">Borrar</a>
+            </td>
+        </tr>
+        {% endfor %}
+        {% if not rutinas %}
+        <tr><td colspan="5" class="text-center text-muted">No hay rutinas todavía</td></tr>
+        {% endif %}
+    </tbody>
+</table>
+{% endblock %}

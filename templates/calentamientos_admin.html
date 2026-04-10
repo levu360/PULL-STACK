@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Gestionar calentamientos</h2>
+    <a href="/admin" class="btn btn-outline-dark">← Volver</a>
+</div>
+
+<div class="card p-4 mb-4">
+    <h5>Agregar calentamiento</h5>
+    <form method="POST" action="/admin/calentamientos/crear">
+        <div class="row">
+            <div class="col-md-5 mb-3">
+                <label>Nombre</label>
+                <input type="text" name="nombre" class="form-control" required>
+            </div>
+            <div class="col-md-2 mb-3">
+                <label>Duración (minutos)</label>
+                <input type="number" name="duracion_minutos" class="form-control">
+            </div>
+            <div class="col-md-5 mb-3">
+                <label>Descripción</label>
+                <input type="text" name="descripcion" class="form-control">
+            </div>
+        </div>
+        <button type="submit" class="btn btn-dark">Agregar</button>
+    </form>
+</div>
+
+<table class="table table-bordered">
+    <thead class="table-dark">
+        <tr>
+            <th>Nombre</th>
+            <th>Duración</th>
+            <th>Descripción</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for c in calentamientos %}
+        <tr>
+            <td>{{ c.nombre }}</td>
+            <td>{{ c.duracion_minutos }} min</td>
+            <td>{{ c.descripcion or '—' }}</td>
+            <td>
+                <a href="/admin/calentamientos/borrar/{{ c.id }}" class="btn btn-sm btn-outline-danger"
+                   onclick="return confirm('¿Borrar este calentamiento?')">Borrar</a>
+            </td>
+        </tr>
+        {% endfor %}
+        {% if not calentamientos %}
+        <tr><td colspan="4" class="text-center text-muted">No hay calentamientos todavía</td></tr>
+        {% endif %}
+    </tbody>
+</table>
+{% endblock %}

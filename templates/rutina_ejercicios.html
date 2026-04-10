@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Ejercicios de: {{ rutina.nombre }}</h2>
+    <a href="/admin/rutinas" class="btn btn-outline-dark">← Volver</a>
+</div>
+
+<div class="card p-4 mb-4">
+    <h5>Agregar ejercicio a la rutina</h5>
+    <form method="POST" action="/admin/rutinas/{{ rutina.id }}/ejercicios/agregar">
+        <div class="row">
+            <div class="col-md-8 mb-3">
+                <label>Ejercicio</label>
+                <select name="ejercicio_id" class="form-control">
+                    {% for e in ejercicios %}
+                    <option value="{{ e.id }}">{{ e.nombre }} ({{ e.nivel_dificultad }})</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-4 mb-3">
+                <label>Orden</label>
+                <input type="number" name="orden" class="form-control" value="{{ rutina.ejercicios|length + 1 }}">
+            </div>
+        </div>
+        <button type="submit" class="btn btn-dark">Agregar</button>
+    </form>
+</div>
+
+<table class="table table-bordered">
+    <thead class="table-dark">
+        <tr>
+            <th>Orden</th>
+            <th>Ejercicio</th>
+            <th>Dificultad</th>
+            <th>Series</th>
+            <th>Repeticiones</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for re in rutina.ejercicios %}
+        <tr>
+            <td>{{ re.orden }}</td>
+            <td>{{ re.ejercicio.nombre }}</td>
+            <td>{{ re.ejercicio.nivel_dificultad }}</td>
+            <td>{{ re.ejercicio.series_sugeridas }}</td>
+            <td>{{ re.ejercicio.repeticiones_sugeridas }}</td>
+            <td>
+                <a href="/admin/rutinas/{{ rutina.id }}/ejercicios/quitar/{{ re.id }}"
+                   class="btn btn-sm btn-outline-danger"
+                   onclick="return confirm('¿Quitar este ejercicio?')">Quitar</a>
+            </td>
+        </tr>
+        {% endfor %}
+        {% if not rutina.ejercicios %}
+        <tr><td colspan="6" class="text-center text-muted">No hay ejercicios en esta rutina</td></tr>
+        {% endif %}
+    </tbody>
+</table>
+{% endblock %}
