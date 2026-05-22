@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Crear nueva rutina</h2>
+    <form method="POST">
+        <div class="mb-3">
+            <label>Nombre de la rutina</label>
+            <input type="text" name="nombre" class="form-control" required>
+        </div>
+        
+        <div class="mb-3">
+            <label>Nivel</label>
+            <select name="nivel" class="form-select" required>
+                <option value="Principiante">Principiante</option>
+                <option value="Medio">Medio</option>
+                <option value="Avanzado">Avanzado</option>
+            </select>
+        </div>
+        
+        <div class="mb-3">
+            <label>Día de la semana</label>
+            <select name="dia_semana" class="form-select" required>
+                <option value="Lunes">Lunes</option>
+                <option value="Martes">Martes</option>
+                <option value="Miércoles">Miércoles</option>
+                <option value="Jueves">Jueves</option>
+                <option value="Viernes">Viernes</option>
+                <option value="Sábado">Sábado</option>
+                <option value="Domingo">Domingo</option>
+            </select>
+        </div>
+        
+        <div class="mb-3">
+            <label>Descripción</label>
+            <textarea name="descripcion" class="form-control" rows="3"></textarea>
+        </div>
+        
+        <div class="mb-3">
+            <label>Selecciona los ejercicios</label>
+            <div class="border p-3 rounded" style="max-height: 300px; overflow-y: auto;">
+                {% for ej in ejercicios %}
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="ejercicios" value="{{ ej.id }}" id="ej{{ ej.id }}">
+                    <label class="form-check-label" for="ej{{ ej.id }}">
+                        <strong>{{ ej.nombre }}</strong> - {{ ej.nivel_dificultad }} ({{ ej.series_sugeridas }}x{{ ej.repeticiones_sugeridas }})
+                    </label>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Guardar rutina</button>
+        <a href="/admin/rutinas" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+{% endblock %}

@@ -82,24 +82,38 @@ def crear_admin():
         db.session.commit()
         return 'Admin creado'
     return 'El admin ya existe'
-
 # ─── DASHBOARD ADMIN ──────────────────────────────
 @app.route('/admin')
 @login_required
 def dashboard_admin():
     if not current_user.es_admin:
         return redirect(url_for('dashboard_usuario'))
+    
     total_usuarios    = Usuario.query.count()
     total_ejercicios  = Ejercicio.query.count()
     total_rutinas     = Rutina.query.count()
     total_encuestas   = Encuesta.query.count()
+    
+    # ========== DATOS PARA GRÁFICO DE SATISFACCIÓN ==========
+    from sqlalchemy import func
+    
+    rutinas = Rutina.query.all()
+    rutinas_nombres = []
+    satisfaccion_promedio = []
+    
+    for rutina in rutinas:
+        rutinas_nombres.append(rutina.nombre)
+        promedio = db.session.query(func.avg(Encuesta.satisfaccion)).filter(Encuesta.rutina_id == rutina.id).scalar()
+        satisfaccion_promedio.append(round(promedio or 0, 1))
+    
     return render_template('dashboard_admin.html',
         total_usuarios=total_usuarios,
         total_ejercicios=total_ejercicios,
         total_rutinas=total_rutinas,
-        total_encuestas=total_encuestas
+        total_encuestas=total_encuestas,
+        rutinas_nombres=rutinas_nombres,
+        satisfaccion_promedio=satisfaccion_promedio
     )
-
 # ─── CRUD EJERCICIOS (ADMIN) ──────────────────────
 @app.route('/admin/ejercicios')
 @login_required
@@ -171,11 +185,26 @@ def lista_usuarios():
 def dashboard_usuario():
     if current_user.es_admin:
         return redirect(url_for('dashboard_admin'))
-    total_rutinas   = Rutina.query.count()
-    total_encuestas = Encuesta.query.filter_by(usuario_id=current_user.id).count()
+    
+    total_rutinas = Rutina.query.count()
+    mis_encuestas = Encuesta.query.filter_by(usuario_id=current_user.id).count()
+    
+    # DATOS PARA EL GRÁFICO DE PROGRESO
+    mis_encuestas_detalle = Encuesta.query.filter_by(usuario_id=current_user.id).order_by(Encuesta.fecha).all()
+    
+    fechas = []
+    satisfaccion_historial = []
+    
+    for encuesta in mis_encuestas_detalle:
+        if encuesta.fecha:
+            fechas.append(encuesta.fecha.strftime('%d/%m'))
+            satisfaccion_historial.append(encuesta.satisfaccion)
+    
     return render_template('dashboard_usuario.html',
         total_rutinas=total_rutinas,
-        total_encuestas=total_encuestas
+        mis_encuestas=mis_encuestas,
+        fechas=fechas,
+        satisfaccion_historial=satisfaccion_historial
     )
 # ─── CRUD CALENTAMIENTOS (ADMIN) ──────────────────
 @app.route('/admin/calentamientos')
@@ -341,6 +370,83 @@ def backup_db():
         download_name=f'backup_{fecha}.db'
     )
 
+# ─── RESTAURAR BACKUP (ADMIN) ─────────────────────
+@app.route('/admin/restaurar', methods=['POST'])
+@login_required
+def restaurar_backup():
+    if not current_user.es_admin:
+        return redirect(url_for('dashboard_usuario'))
+    import shutil
+    from datetime import datetime
+    archivo = request.files.get('backup_file')
+    if not archivo or not archivo.filename.endswith('.db'):
+        flash('Por favor sube un archivo .db válido', 'danger')
+        return redirect(url_for('dashboard_admin'))
+    fecha = datetime.now().strftime('%Y%m%d_%H%M%S')
+    shutil.copy2('instance/calistenia.db', f'instance/antes_restaurar_{fecha}.db')
+    archivo.save('instance/calistenia.db')
+    flash('Base de datos restaurada correctamente', 'success')
+    return redirect(url_for('dashboard_admin'))
+
+# ─── ELIMINAR USUARIO (ADMIN) ─────────────────────
+@app.route('/admin/usuarios/borrar/<int:id>')
+@login_required
+def borrar_usuario(id):
+    if not current_user.es_admin:
+        return redirect(url_for('dashboard_usuario'))
+    usuario = Usuario.query.get_or_404(id)
+    if usuario.es_admin:
+        flash('No puedes eliminar al administrador', 'danger')
+        return redirect(url_for('lista_usuarios'))
+    db.session.delete(usuario)
+    db.session.commit()
+    flash('Usuario eliminado correctamente', 'success')
+    return redirect(url_for('lista_usuarios'))
+# ─── CALENTAMIENTO ANTES DE RUTINA ────────────────
+@app.route('/calentamiento/<int:rutina_id>')
+@login_required
+def calentamiento(rutina_id):
+    return render_template('calentamiento.html', rutina_id=rutina_id)
 
 if __name__ == "__main__":
     app.run(debug=True)
+
+@app.route('/admin/rutinas/nueva', methods=['GET', 'POST'])
+@login_required
+def nueva_rutina():
+    if not current_user.es_admin:
+        return redirect(url_for('dashboard_usuario'))
+    
+    ejercicios = Ejercicio.query.order_by(Ejercicio.nombre).all()
+    
+    if request.method == 'POST':
+        # Crear la rutina
+        nombre = request.form['nombre']
+        nivel = request.form['nivel']
+        descripcion = request.form['descripcion']
+        dia_semana = request.form['dia_semana']
+        
+        nueva_rutina = Rutina(
+            nombre=nombre,
+            nivel=nivel,
+            descripcion=descripcion,
+            dia_semana=dia_semana
+        )
+        db.session.add(nueva_rutina)
+        db.session.flush()  # Para obtener el ID sin hacer commit aún
+        
+        # Asignar los ejercicios seleccionados
+        ejercicios_ids = request.form.getlist('ejercicios')
+        for i, ejercicio_id in enumerate(ejercicios_ids):
+            re = RutinaEjercicio(
+                rutina_id=nueva_rutina.id,
+                ejercicio_id=int(ejercicio_id),
+                orden=i+1
+            )
+            db.session.add(re)
+        
+        db.session.commit()
+        flash('Rutina creada con ejercicios asignados', 'success')
+        return redirect(url_for('lista_rutinas_admin'))
+    
+    return render_template('nueva_rutina.html', ejercicios=ejercicios)

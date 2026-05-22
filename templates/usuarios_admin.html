@@ -11,7 +11,8 @@
             <th>Nombre</th>
             <th>Email</th>
             <th>Rol</th>
-            <th>Registros de progreso</th>
+            <th>Encuestas</th>
+            <th>Acciones</th>
         </tr>
     </thead>
     <tbody>
@@ -26,7 +27,15 @@
                 <span class="badge bg-secondary">Usuario</span>
                 {% endif %}
             </td>
-            <td>{{ u.progresos|length }}</td>
+            <td>{{ u.encuestas|length }}</td>
+            <td>
+                {% if not u.es_admin %}
+                <a href="/admin/usuarios/borrar/{{ u.id }}" class="btn btn-sm btn-outline-danger"
+                   onclick="return confirm('¿Eliminar a {{ u.nombre }}?')">Eliminar</a>
+                {% else %}
+                <span class="text-muted">—</span>
+                {% endif %}
+            </td>
         </tr>
         {% endfor %}
     </tbody>

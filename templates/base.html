@@ -161,21 +161,26 @@
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #0f0f1a; }
         ::-webkit-scrollbar-thumb { background: #6c3fc5; border-radius: 3px; }
-    </style>
+ </style>
+
 </head>
+
 <body>
-    <nav class="navbar">
-        <span class="navbar-brand">💪 Pull Stack</span>
-    </nav>
 
-    <div class="container">
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% for category, message in messages %}
-                <div class="alert alert-{{ category }} mt-3">{{ message }}</div>
-            {% endfor %}
-        {% endwith %}
+<nav class="navbar">
+    <span class="navbar-brand">Pull Stack</span>
+</nav>
 
-        {% block content %}{% endblock %}
-    </div>
+<div class="container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+            <!-- Aquí puedes mostrar los mensajes si quieres -->
+        {% endfor %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+</div>  <!-- ← ESTE DIV ESTABA CERRANDO MAL -->
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </body>
 </html>

@@ -1,10 +1,12 @@
 {% extends "base.html" %}
 {% block content %}
+
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h2>Panel de administración</h2>
     <a href="/logout" class="btn btn-outline-danger">Cerrar sesión</a>
 </div>
 
+<!-- Tarjetas de estadísticas -->
 <div class="row mb-4">
     <div class="col-md-3">
         <div class="card text-center p-3">
@@ -32,12 +34,133 @@
     </div>
 </div>
 
-<div class="d-flex gap-2 flex-wrap">
+    <!-- ========== GRÁFICO DE SATISFACCIÓN PROMEDIO POR RUTINA ========== -->
+<div class="card mb-4">
+    <div class="card-header" style="background: linear-gradient(90deg, #1a0533, #3b1b6e); color: #c084fc; border-bottom: 1px solid #6c3fc5;">
+        <h4>📊 Satisfacción promedio por rutina</h4>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-8 mx-auto">
+                <canvas id="graficoSatisfaccion" width="400" height="200"></canvas>
+            </div>
+        </div>
+        <p class="text-muted mt-2 small text-center">Promedio de calificación de satisfacción (1 = muy malo, 5 = excelente) para cada rutina</p>
+    </div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- Datos ocultos para el gráfico -->
+<div id="datosGrafico" 
+     data-rutinas='{{ rutinas_nombres|tojson }}' 
+     data-satisfaccion='{{ satisfaccion_promedio|tojson }}'
+     style="display: none;">
+</div>
+
+<!-- Botones de acción -->
+<div class="d-flex gap-2 flex-wrap mb-4">
     <a href="/admin/ejercicios" class="btn btn-dark">Gestionar ejercicios</a>
     <a href="/admin/rutinas" class="btn btn-dark">Gestionar rutinas</a>
     <a href="/admin/calentamientos" class="btn btn-dark">Gestionar calentamientos</a>
     <a href="/admin/usuarios" class="btn btn-outline-dark">Ver usuarios</a>
     <a href="/admin/encuestas" class="btn btn-outline-dark">Ver encuestas</a>
-    <a href="/admin/backup" class="btn btn-outline-secondary">Hacer backup</a>
+    <a href="/admin/backup" class="btn btn-outline-secondary">Descargar backup</a>
+    <a href="/admin/rutinas/nueva" class="btn btn-success mb-2">Crear rutina rápida</a>
 </div>
+
+<!-- Restaurar backup -->
+<div class="card p-3">
+    <h6 class="mb-3">Restaurar base de datos desde backup</h6>
+    <form method="POST" action="/admin/restaurar" enctype="multipart/form-data">
+        <div class="d-flex gap-2 align-items-center">
+            <input type="file" name="backup_file" accept=".db" class="form-control" style="max-width: 300px;">
+            <button type="submit" class="btn btn-outline-danger"
+                    onclick="return confirm('¿Seguro? Esto reemplazará la base de datos actual.')">
+                Restaurar
+            </button>
+        </div>
+        <small class="text-muted mt-1 d-block">Solo archivos .db — se crea copia automática antes de restaurar</small>
+    </form>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const datosDiv = document.getElementById('datosGrafico');
+    
+    if (datosDiv && typeof Chart !== 'undefined') {
+        try {
+            const rutinas = JSON.parse(datosDiv.dataset.rutinas);
+            const satisfaccion = JSON.parse(datosDiv.dataset.satisfaccion);
+            
+            if (rutinas.length > 0 && satisfaccion.length > 0) {
+                const ctx = document.getElementById('graficoSatisfaccion').getContext('2d');
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: rutinas,
+                        datasets: [{
+                            label: 'Satisfacción promedio (1-5)',
+                            data: satisfaccion,
+                            backgroundColor: '#a855f7',
+                            borderColor: '#c084fc',
+                            borderWidth: 1,
+                            borderRadius: 8,
+                            barPercentage: 0.7
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        plugins: {
+                            legend: {
+                                labels: { color: '#e0e0f0', font: { size: 12 } }
+                            },
+                            tooltip: {
+                                backgroundColor: '#1a1a2e',
+                                titleColor: '#c084fc',
+                                bodyColor: '#e0e0f0',
+                                borderColor: '#c084fc',
+                                borderWidth: 1,
+                                callbacks: {
+                                    label: function(context) {
+                                        return `Satisfacción: ${context.raw} / 5`;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                ticks: { color: '#9090b0', font: { size: 11 } },
+                                grid: { color: '#2e2e5e' }
+                            },
+                            y: {
+                                beginAtZero: true,
+                                max: 5,
+                                ticks: { stepSize: 1, color: '#9090b0', font: { size: 11 } },
+                                grid: { color: '#2e2e5e' },
+                                title: {
+                                    display: true,
+                                    text: 'Satisfacción (1-5)',
+                                    color: '#c084fc',
+                                    font: { size: 11 }
+                                }
+                            }
+                        }
+                    }
+                });
+                console.log("✅ Gráfico de satisfacción creado");
+            } else {
+                console.log("No hay datos suficientes para el gráfico");
+            }
+        } catch(e) {
+            console.log("Error al crear gráfico:", e);
+        }
+    } else {
+        console.log("Chart no disponible o div no encontrado");
+    }
+});
+</script>
+
 {% endblock %}
